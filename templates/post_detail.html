@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{{ post.title }}</h1>
+    <div class="meta">
+        <span class="badge">{{ post.category }}</span>
+        by {{ post.author.username|default:"Anonymous" }}
+        on {{ post.created_at|date:"M d, Y" }}
+    </div>
+    <div class="post-body">{{ post.content }}</div>
+</div>
+
+<div class="comments">
+    {% if user.is_authenticated %}
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn" type="submit">Post Comment</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% for comment in parent_comments %}
+        {% include 'comment.html' with variable=comment %}
+    {% empty %}
+        <div class="card"><p>No comments yet.</p></div>
+    {% endfor %}
+</div>
+{% endblock %}

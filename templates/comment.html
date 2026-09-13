@@ -1,0 +1,24 @@
+<div class="comment">
+    <div class="comment-head">
+        <strong>{{ variable.author.username|default:"Anonymous" }}</strong>
+        &middot; {{ variable.created_at|date:"M d, Y H:i" }}
+    </div>
+    <p>{{ variable.body }}</p>
+
+    {% if user.is_authenticated %}
+    <form class="reply-form" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="parent_id" value="{{ variable.id }}">
+        <input type="text" name="body" placeholder="Reply...">
+        <button class="btn btn-sm" type="submit">Reply</button>
+    </form>
+    {% endif %}
+
+    {% if variable.replies.exists %}
+        <div class="replies">
+            {% for reply in variable.replies.all %}
+                {% include 'comment.html' with variable=reply %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

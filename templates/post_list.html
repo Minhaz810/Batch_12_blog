@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}All Posts{% endblock %}
+
+{% block content %}
+<h1>Latest Posts</h1>
+
+<form class="filter-bar" method="get">
+    <input type="text" name="query" value="{{ query }}" placeholder="Search posts with content,author name or title...">
+
+    <select name="category_id">
+        <option value="">All Categories</option>
+        {% for c in categories %}
+            <option value="{{ c.id }}"
+                {% if selected_category == c.id|stringformat:"s" %}selected{% endif %}>
+                {{ c.category_name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <select name="status">
+        <option value="">Any Status</option>
+        {% for value, label in status_choices %}
+            <option value="{{ value }}"
+                {% if selected_status == value %}selected{% endif %}>
+                {{ label }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button class="btn" type="submit">Search</button>
+    <a class="btn btn-ghost" href="{% url 'post_list' %}">Reset</a>
+</form>
+
+<div class="layout">
+
+    <div class="main-col">
+        <p class="meta">{{ result_count }} post{{ result_count|pluralize }} found</p>
+
+        {% for post in post_summary %}
+            <div class="card">
+                <h2><a href="">{{ post.title }}</a></h2>
+                <div class="meta">
+                    <span class="badge">{{ post.category }}</span>
+                    {{ post.created_at|date:"M d, Y" }}
+                </div>
+                <p>{{ post.content }}...
+                    <a class="read-more" href="{% url 'post_detail' post.id %}">Read More</a>
+                </p>
+            </div>
+        {% empty %}
+            <div class="card"><p>Nothing matched your search.</p></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
